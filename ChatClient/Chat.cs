@@ -9,6 +9,20 @@ internal class Chat
     private NetworkStream baseStream;
     private StreamWriter writer;
     private StreamReader reader;
+    bool running = false;
+    IStateChat stateChat;
+
+    public Chat(string ip, int port)
+    {
+        ipServer = IPAddress.Parse(ip);
+        this.port = port;
+        stateChat = new StateRegistration(this);
+    }
+
+    public void SetState(IStateChat newState)
+    {
+        stateChat = newState;
+    }
 
     internal void Connect()
     {
@@ -20,7 +34,9 @@ internal class Chat
             baseStream = client.GetStream();
             writer = new StreamWriter(baseStream);
             reader = new StreamReader(baseStream);
-            ListenServer();
+            running = true;
+            ChatTools.StartThreadReader(reader,
+                (o) => ListenServer((StreamReader)o));
             StartMessaging();
         }
         catch (Exception e)
@@ -32,17 +48,34 @@ internal class Chat
 
     private void StartMessaging()
     {
-        throw new NotImplementedException();
+        while (running)
+        {
+            Console.Write("Your message: ");
+            string text = Console.ReadLine();
+            text = stateChat.ConstructSendMessage(text);
+            if (text != null)
+            {
+                writer.WriteLine(text);
+                writer.Flush();
+                if (text == "/exit")
+                {
+                    running = false;
+                    break;
+                }
+            }
+        }
     }
 
-    private void ListenServer()
+    private void ListenServer(StreamReader o)
     {
-        throw new NotImplementedException();
+        while (running)
+        {
+            string message = reader.ReadLine();
+            message = stateChat.HandleServerMessage(message, this);
+            if (message == "/exit")
+                break;
+        }
     }
 
-    public Chat(string ip, int port)
-    {
-        ipServer = IPAddress.Parse(ip);
-        this.port = port;
-    }
+    
 }

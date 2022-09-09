@@ -12,7 +12,7 @@
         }
     }
 
-    internal void RunCommand(string command)
+    internal void RunMessage(string command)
     {
         Console.WriteLine(command);
     }

@@ -1,4 +1,5 @@
-﻿using ChatTypes;
+﻿using Chat1135;
+using ChatTypes;
 using System.Net.Sockets;
 
 internal class ChatClient
@@ -25,11 +26,16 @@ internal class ChatClient
 
     public void Listen()
     {
-        while (ChatServer.GetInstance().Running)
+        try
         {
-            string command = reader.ReadLine();
-            ChatMessaging.GetInstance().RunCommand(command);
+            while (ChatServer.GetInstance().Running)
+            {
+                string command = reader.ReadLine();
+                if (!ChatCommands.GetInstance().RunCommand(command, this))
+                    ChatMessaging.GetInstance().RunMessage(command);
+            }
         }
+        catch { }
     }
 
     public void SendMessage(string text)
@@ -48,6 +54,7 @@ internal class ChatClient
         {
             baseStream.Close();
             baseStream.Dispose();
+            AllClients.GetInstance().RemoveClient(this);
         }
         catch { }
     }

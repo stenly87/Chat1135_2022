@@ -26,5 +26,10 @@ namespace Chat1135
         {
             clients.Add(chatClient);
         }
+
+        internal void RemoveClient(ChatClient chatClient)
+        {
+            clients.Remove(chatClient);
+        }
     }
 }
