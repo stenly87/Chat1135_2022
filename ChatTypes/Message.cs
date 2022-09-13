@@ -8,9 +8,7 @@ namespace ChatTypes
 {
     public class Message
     {
-        public string Text { get; set; }
-        public long DateSended { get; set; }
-        public int UserID { get; set; }
-        public int ReceiverID { get; set; } // 0 - всем
+        public TypeMessage Type { get; set; }
+        public object Arg { get; set; }
     }
 }

@@ -22,7 +22,10 @@ internal class StateRegistration : IStateChat
         else if (registration.Password == null)
         {
             registration.Password = text;
-            string json = JsonSerializer.Serialize<Registration>(registration);
+            Message message = new Message { 
+                Type = TypeMessage.Registration,
+                Arg = registration };
+            string json = JsonSerializer.Serialize<Message>(message);
             chat.SetState(new StateRegistrationApprove(chat));
             return json;
         }

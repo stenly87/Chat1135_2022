@@ -1,6 +1,19 @@
-﻿internal class ChatCommands
+﻿using System.Text.Json;
+using ChatTypes;
+
+internal class ChatCommands
 {
     static ChatCommands instance;
+    private CommandsWorker worker;
+
+    private ChatCommands()
+    {
+        worker = new CommandsWorker();
+        worker.SetWorker(new NullWorker());
+        worker.SetWorker(new RegistrationWork());
+        worker.SetWorker(new ListUserWork());
+    }
+
     internal static ChatCommands GetInstance()
     {
         if (instance == null)  
@@ -19,6 +32,10 @@
             return true;
         }
 
-        return false;
+        Message message = JsonSerializer.Deserialize<Message>(command);
+        if (message == null)
+            return false;
+
+        return worker.Work(message, chatClient);
     }
 }

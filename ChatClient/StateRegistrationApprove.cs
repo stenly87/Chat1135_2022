@@ -13,6 +13,7 @@
 
     public string? HandleServerMessage(string? message, Chat chat)
     {
+        Console.WriteLine(message);
         return null;
     }
 }
