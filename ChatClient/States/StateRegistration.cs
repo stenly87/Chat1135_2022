@@ -14,6 +14,8 @@ internal class StateRegistration : IStateChat
 
     public string? ConstructSendMessage(string? text)
     {
+        if (text.StartsWith("/"))
+            return text;
         if (registration.Nickname == null)
         {
             Console.WriteLine("Введите пароль для регистрации");
@@ -22,12 +24,9 @@ internal class StateRegistration : IStateChat
         else if (registration.Password == null)
         {
             registration.Password = text;
-            Message message = new Message { 
-                Type = TypeMessage.Registration,
-                Arg = registration };
-            string json = JsonSerializer.Serialize<Message>(message);
+            text = ChatTools.CreateMessageToServer(registration, TypeMessage.Registration);
             chat.SetState(new StateRegistrationApprove(chat));
-            return json;
+            return text;
         }
         return null;
     }

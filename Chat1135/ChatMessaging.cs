@@ -1,4 +1,8 @@
-﻿internal class ChatMessaging
+﻿using Chat1135;
+using ChatTypes;
+using System.Text.Json;
+
+internal class ChatMessaging
 {
     static ChatMessaging instance;
     static object lockObject = new object();
@@ -14,7 +18,9 @@
 
     internal void RunMessage(string command)
     {
-        Console.WriteLine(command);
+        Message message = JsonSerializer.Deserialize<Message>(command);
+        var userMessage = JsonSerializer.Deserialize<UserMessage>(message.Arg.ToString());
+        AllClients.GetInstance().BroadcastMessage(userMessage);
     }
 
     private ChatMessaging()

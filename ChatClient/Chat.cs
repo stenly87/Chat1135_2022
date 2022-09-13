@@ -1,8 +1,10 @@
-﻿using System.Net;
+﻿using ChatTypes;
+using System.Net;
 using System.Net.Sockets;
 
 internal class Chat
 {
+    internal Registration UserData { get; set; }
     IPAddress ipServer;
     TcpClient client;
     readonly int port;
@@ -28,7 +30,7 @@ internal class Chat
     {
         try
         {
-            client = new TcpClient(new IPEndPoint(IPAddress.Any, 50001));
+            client = new TcpClient(new IPEndPoint(IPAddress.Any,  50001 + new Random().Next(1, 1000)));
             client.Connect(
                 new IPEndPoint(ipServer, port));
             baseStream = client.GetStream();
@@ -50,7 +52,7 @@ internal class Chat
     {
         while (running)
         {
-            Console.Write("Your message: ");
+            Console.Write("-> ");
             string text = Console.ReadLine();
             text = stateChat.ConstructSendMessage(text);
             if (text != null)
@@ -71,9 +73,12 @@ internal class Chat
         while (running)
         {
             string message = reader.ReadLine();
-            message = stateChat.HandleServerMessage(message, this);
-            if (message == "/exit")
-                break;
+            if (message != null)
+            {
+                message = stateChat.HandleServerMessage(message, this);
+                if (message == "/exit")
+                    break;
+            }
         }
     }
 

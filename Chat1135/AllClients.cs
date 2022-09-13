@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ChatTypes;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -19,10 +20,22 @@ namespace Chat1135
 
         internal bool CheckNameExist(string nickname)
         {
-            throw new NotImplementedException();
+            var found = clients.Find(s => s.Data?.Nickname == nickname);
+            return found != null;
         }
 
         List<ChatClient> clients = new List<ChatClient>();
+
+        internal void BroadcastMessage(UserMessage? userMessage)
+        {
+            var recievers = clients.Where(s => s.Data?.ID != userMessage.UserID);
+            var sender = clients.FirstOrDefault(s => s.Data?.ID == userMessage.UserID);
+            string message = $"{sender.Data.Nickname}: {userMessage.Text}" ;
+            foreach (var client in recievers)
+            {
+                client.SendMessage(message);
+            }
+        }
 
         private AllClients()
         {

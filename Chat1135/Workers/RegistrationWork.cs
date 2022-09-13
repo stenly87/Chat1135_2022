@@ -15,12 +15,16 @@ internal class RegistrationWork : AbstractWorker
                 chatClient.SendMessage(message.Arg.ToString());
                 return true;
             }
+            // при наличии бд, здесь была бы проверка на логин и пароль в бд
+            // если пользователь в бд есть, то получаем его ID и отправляем обратно
+
             chatClient.Data = regData;
+            //  при наличии бд, регистрация в бд нового пользователя
             regData.ID = clients.GetNextClientID();
             chatClient.SendMessage(JsonSerializer.Serialize<Registration>(regData));
             return true;
         }
         else
-            return NextWorker.Work(message, chatClient);
+            return NextWorker?.Work(message, chatClient) ?? false;
     }
 }
