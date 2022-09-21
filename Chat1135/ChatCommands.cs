@@ -10,6 +10,7 @@ internal class ChatCommands
     {
         worker = new CommandsWorker();
         worker.SetWorker(new NullWorker());
+        worker.SetWorker(new ExitWork());
         worker.SetWorker(new RegistrationWork());
         worker.SetWorker(new ListUserWork());
     }
@@ -25,13 +26,7 @@ internal class ChatCommands
     {
         if (command == null)
             return true;
-        if (command == "/exit")
-        {
-            chatClient.SendMessage("/exit");
-            chatClient.Disconnect();
-            return true;
-        }
-
+        
         Message message = JsonSerializer.Deserialize<Message>(command);
         if (message == null)
             return false;

@@ -4,7 +4,7 @@ using System.Net.Sockets;
 
 internal class Chat
 {
-    internal Registration UserData { get; set; }
+    public ChatInfo Info { get; set; }
     IPAddress ipServer;
     TcpClient client;
     readonly int port;
@@ -18,6 +18,7 @@ internal class Chat
     {
         ipServer = IPAddress.Parse(ip);
         this.port = port;
+        Info = new ChatInfo();
         stateChat = new StateRegistration(this);
     }
 
@@ -54,16 +55,13 @@ internal class Chat
         {
             Console.Write("-> ");
             string text = Console.ReadLine();
+            if (text == "/exit")
+                running = false;
             text = stateChat.ConstructSendMessage(text);
             if (text != null)
             {
                 writer.WriteLine(text);
                 writer.Flush();
-                if (text == "/exit")
-                {
-                    running = false;
-                    break;
-                }
             }
         }
     }

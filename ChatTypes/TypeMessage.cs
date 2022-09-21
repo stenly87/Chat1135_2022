@@ -4,6 +4,7 @@
     {
         Registration,
         UserMessage,
-        ListUsers
+        ListUsers,
+        Exit
     }
 }

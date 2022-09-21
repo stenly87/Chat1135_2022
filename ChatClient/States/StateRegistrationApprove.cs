@@ -19,12 +19,15 @@ internal class StateRegistrationApprove : IStateChat
         var data = JsonSerializer.Deserialize<Registration>(message);
         if (data.ID == 0)
         {
-            Console.WriteLine("Имя занято. Зарегистрируйтесь заново");
+            if (data.ErrorCode == 1)
+                Console.WriteLine("Имя занято. Зарегистрируйтесь заново");
+            else if (data.ErrorCode == 2)
+                Console.WriteLine("Имя не должно содержать пробелов. Зарегистрируйтесь заново");
             chat.SetState(new StateRegistration(chat));
         }
         else
         {
-            chat.UserData = data;
+            chat.Info.SetUserData(data);
             Console.WriteLine($"Вы зарегистрированы на сервере с ником {data.Nickname}");
             chat.SetState(new StateMessaging(chat));
         }

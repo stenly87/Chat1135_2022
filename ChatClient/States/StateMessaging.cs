@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
 
 
@@ -17,21 +18,81 @@ internal class StateMessaging : IStateChat
 
     public string? ConstructSendMessage(string? text)
     {
-        if (text.StartsWith("/"))
-            return text;
-        UserMessage message = new UserMessage
+        object argMessage = null;
+        TypeMessage typeMessage = TypeMessage.UserMessage;
+        if (!text.StartsWith("/"))
         {
-            DateSended = DateTime.Now.ToBinary(),
-            Text = text,
-            UserID = chat.UserData.ID
-        };
-        text = ChatTools.CreateMessageToServer(message, TypeMessage.UserMessage);
+            argMessage = new UserMessage
+            {
+                DateSended = DateTime.Now.ToBinary(),
+                Text = text,
+                UserID = chat.Info.UserData.ID
+            };
+        }
+        else if (text == "/exit")
+            typeMessage = TypeMessage.Exit;
+        else if (text == "/listusers")
+            typeMessage = TypeMessage.ListUsers;
+        else if (text.StartsWith("/p "))
+        {
+            string nick = null;
+            if (chat.Info.Online == null)
+            {
+                typeMessage = TypeMessage.ListUsers;
+                Console.WriteLine("Запрос списка пользователей. Повторите сообщение");
+            }
+            else
+            {
+                for (int i = 3; i < text.Length; i++)
+                    if (text[i] == ' ')
+                    {
+                        nick = text.Substring(3, i - 3);
+                        text = text.Substring(i).Trim();
+                        break;
+                    }
+                var receiver = chat.
+                    Info.
+                    Online.
+                    OnlineUsers.
+                    FirstOrDefault(s => s.Nickname == nick);
+                if (receiver == null)
+                {
+                    Console.WriteLine("Нет такого пользователя в локальном списке");
+                    chat.Info.ViewOnline();
+                    return null;
+                }
+                argMessage = new UserMessage
+                {
+                    DateSended = DateTime.Now.ToBinary(),
+                    Text = text,
+                    UserID = chat.Info.UserData.ID,
+                    ReceiverID = receiver.ID
+                };
+            }
+        }
+        text = ChatTools.CreateMessageJsonString(argMessage, typeMessage);
         return text;
     }
 
     public string? HandleServerMessage(string? message, Chat chat)
     {
-        Console.WriteLine(message);
+        Message msg = null;
+        try
+        {
+            msg = JsonSerializer.Deserialize<Message>(message);
+        }
+        catch { }
+        if (msg != null)
+        {
+            if (msg.Type == TypeMessage.ListUsers)
+            {
+                ListUsers list = JsonSerializer.Deserialize<ListUsers>(msg.Arg.ToString());
+                chat.Info.SetOnlineData(list);
+                chat.Info.ViewOnline();
+            }
+        }
+        else
+            Console.WriteLine(message);
         return null;
     }
 }

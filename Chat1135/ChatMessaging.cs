@@ -20,7 +20,10 @@ internal class ChatMessaging
     {
         Message message = JsonSerializer.Deserialize<Message>(command);
         var userMessage = JsonSerializer.Deserialize<UserMessage>(message.Arg.ToString());
-        AllClients.GetInstance().BroadcastMessage(userMessage);
+        if (userMessage.ReceiverID == 0)
+            AllClients.GetInstance().BroadcastMessage(userMessage);
+        else
+            AllClients.GetInstance().SendPrivateMessage(userMessage);
     }
 
     private ChatMessaging()

@@ -12,7 +12,14 @@ internal class RegistrationWork : AbstractWorker
             var clients = AllClients.GetInstance();
             if (clients.CheckNameExist(regData.Nickname))
             {
-                chatClient.SendMessage(message.Arg.ToString());
+                regData.ErrorCode = 1;
+                chatClient.SendMessage(JsonSerializer.Serialize<Registration>(regData));
+                return true;
+            }
+            if (regData.Nickname.Contains(" "))
+            {
+                regData.ErrorCode = 2;
+                chatClient.SendMessage(JsonSerializer.Serialize<Registration>(regData));
                 return true;
             }
             // при наличии бд, здесь была бы проверка на логин и пароль в бд

@@ -24,7 +24,7 @@ internal class StateRegistration : IStateChat
         else if (registration.Password == null)
         {
             registration.Password = text;
-            text = ChatTools.CreateMessageToServer(registration, TypeMessage.Registration);
+            text = ChatTools.CreateMessageJsonString(registration, TypeMessage.Registration);
             chat.SetState(new StateRegistrationApprove(chat));
             return text;
         }

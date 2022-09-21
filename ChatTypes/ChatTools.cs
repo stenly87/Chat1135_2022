@@ -1,7 +1,7 @@
 ﻿using ChatTypes;
 using System.Text.Json;
 
-internal static class ChatTools
+public static class ChatTools
 {
     public static void StartThreadReader(object arg1, Action<object> action)
     {
@@ -9,7 +9,7 @@ internal static class ChatTools
         thread.Start(arg1);
     }
 
-    public static string CreateMessageToServer(object arg1, TypeMessage type)
+    public static string CreateMessageJsonString(object arg1, TypeMessage type)
     {
         Message message = new Message
         {
