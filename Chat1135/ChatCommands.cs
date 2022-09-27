@@ -10,9 +10,10 @@ internal class ChatCommands
     {
         worker = new CommandsWorker();
         worker.SetWorker(new NullWorker());
-        worker.SetWorker(new ExitWork());
         worker.SetWorker(new RegistrationWork());
         worker.SetWorker(new ListUserWork());
+        worker.SetWorker(new BanUserWork());
+        worker.SetWorker(new ExitWork());
     }
 
     internal static ChatCommands GetInstance()

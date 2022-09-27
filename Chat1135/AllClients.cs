@@ -22,6 +22,16 @@ namespace Chat1135
             return listUsers;
         }
 
+        internal void BanUser(int id)
+        {
+            var client = clients.FirstOrDefault(s => s.Data?.ID == id);
+            if (client != null)
+            {
+                client.Banned = true;
+                client.SendMessage("Вас забанили. Приятного вечера.");
+            }
+        }
+
         static AllClients instance;
         public static AllClients GetInstance()
         { 

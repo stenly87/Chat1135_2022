@@ -11,6 +11,7 @@ internal class ChatClient
     private StreamReader reader;
 
     public Registration Data { get; set; }
+    public bool Banned { get; internal set; }
 
     public ChatClient(TcpClient client)
     {
@@ -31,7 +32,7 @@ internal class ChatClient
             while (ChatServer.GetInstance().Running)
             {
                 string command = reader.ReadLine();
-                if (!ChatCommands.GetInstance().RunCommand(command, this))
+                if (!ChatCommands.GetInstance().RunCommand(command, this) && !Banned)
                     ChatMessaging.GetInstance().RunMessage(command);
             }
         }

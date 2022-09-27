@@ -5,6 +5,7 @@
         Registration,
         UserMessage,
         ListUsers,
-        Exit
+        Exit,
+        BanUser
     }
 }

@@ -33,6 +33,17 @@ internal class StateMessaging : IStateChat
             typeMessage = TypeMessage.Exit;
         else if (text == "/listusers")
             typeMessage = TypeMessage.ListUsers;
+        else if (text.StartsWith("/ban "))
+        {
+            string nick = null;
+            var receiver = chat.
+                    Info.
+                    Online.
+                    OnlineUsers.
+                    FirstOrDefault(s => s.Nickname == nick);
+            argMessage = receiver.ID;
+            typeMessage = TypeMessage.Ban;
+        }
         else if (text.StartsWith("/p "))
         {
             string nick = null;
@@ -68,6 +79,30 @@ internal class StateMessaging : IStateChat
                     UserID = chat.Info.UserData.ID,
                     ReceiverID = receiver.ID
                 };
+            }
+        }
+        else if (text.StartsWith("/ban ")) // /ban nick
+        {
+            if (chat.Info.Online == null)
+            {
+                typeMessage = TypeMessage.ListUsers;
+                Console.WriteLine("Запрос списка пользователей. Повторите сообщение");
+            }
+            else
+            {
+                string nick = text.Split()[1];
+                var userToBan = chat.
+                        Info.
+                        Online.
+                        OnlineUsers.
+                        FirstOrDefault(s => s.Nickname == nick);
+                if (userToBan == null)
+                {
+                    Console.WriteLine("Пользователь не найден");
+                    return null;
+                }
+                typeMessage = TypeMessage.BanUser;
+                argMessage = userToBan.ID;
             }
         }
         text = ChatTools.CreateMessageJsonString(argMessage, typeMessage);
