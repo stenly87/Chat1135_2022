@@ -32,18 +32,7 @@ internal class StateMessaging : IStateChat
         else if (text == "/exit")
             typeMessage = TypeMessage.Exit;
         else if (text == "/listusers")
-            typeMessage = TypeMessage.ListUsers;
-        else if (text.StartsWith("/ban "))
-        {
-            string nick = null;
-            var receiver = chat.
-                    Info.
-                    Online.
-                    OnlineUsers.
-                    FirstOrDefault(s => s.Nickname == nick);
-            argMessage = receiver.ID;
-            typeMessage = TypeMessage.Ban;
-        }
+            typeMessage = TypeMessage.ListUsers;      
         else if (text.StartsWith("/p "))
         {
             string nick = null;
