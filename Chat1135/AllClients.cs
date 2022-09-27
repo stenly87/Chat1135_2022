@@ -14,7 +14,9 @@ namespace Chat1135
         internal ListUsers GetOnlineUsers()
         {
             ListUsers listUsers = new ListUsers();
-            listUsers.OnlineUsers.AddRange(clients.Select(
+            listUsers.OnlineUsers.AddRange(clients.
+                Where(s => s.Data != null).
+                Select(
                 s => new ListUsers.PublicUser {
                  ID = s.Data.ID,
                  Nickname = s.Data.Nickname
