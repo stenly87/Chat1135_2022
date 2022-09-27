@@ -23,25 +23,8 @@ internal class StateMessaging : IStateChat
     {
         if (text == null)   
             return null;
-        var args = workerCenter.TestCommand(text);
-        TypeMessage typeMessage;
-        object argMessage;
-        if (args == null)
-        {
-            typeMessage = TypeMessage.UserMessage;
-            argMessage = new UserMessage
-            {
-                DateSended = DateTime.Now.ToBinary(),
-                Text = text,
-                UserID = chat.Info.UserData.ID
-            };
-        }
-        else
-        {
-            typeMessage = args.Type;
-            argMessage = args.Value;
-        }
-        text = ChatTools.CreateMessageJsonString(argMessage, typeMessage);
+        var args = workerCenter.TestCommand(text);        
+        text = ChatTools.CreateMessageJsonString(args.Value, args.Type);
         return text;
     }
 
